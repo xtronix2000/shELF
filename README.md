@@ -7,7 +7,7 @@ syscall logs to detect statically linked interpreter libraries (Lua, Python, Per
 
 ## How it works
 ```
-Source archive → Docker sandbox → strace logs → Analysis → interpreters.json
+Source archive → Docker sandbox → strace logs → Analysis → results
 ```
 
 The tool intercepts linker calls during compilation and looks for interpreter 
@@ -15,41 +15,25 @@ signatures in arguments — linker flags (`-llua5.3`), static archives (`liblua.
 and direct file opens (`openat` on `.a` files).
 
 ## Usage
+
+**Web interface**
+```bash
+flask --app web/app.py run
+```
+Open `http://localhost:5000`, upload a source archive and get results in the browser.
+
+**CLI**
 ```bash
 python main.py sources/<project>/
 ```
-
-That's it. The tool will:
-1. Build the Docker image (once, cached on subsequent runs)
-2. Run the build inside a sandbox and collect strace logs
-3. Analyze logs and write results to `sources/<project>/interpreters.json`
+Results are written to `sources/<project>/interpreters.json`.
 
 To force rebuild the Docker image:
 ```bash
 python main.py sources/<project>/ --rebuild
 ```
 
-## Project structure
-```
-shELF/
-├── main.py              # Entry point
-├── core/
-│   ├── models.py        # BuildEvent, DetectionHit dataclasses
-│   ├── signatures.py    # Interpreter signatures dictionary
-│   ├── log_parser.py    # strace line → BuildEvent
-│   └── analyzer.py      # BuildEvent → DetectionHit
-├── sandbox/
-│   ├── Dockerfile       # Debian 12 build environment
-│   ├── tracer.sh        # Runs dpkg-buildpackage under strace
-│   └── runner.py        # Docker SDK wrapper
-└── sources/             # Place project archives here
-    └── <project>/
-        └── <source>.tar.gz
-```
-
 ## Preparing source archives
-
-Download Debian source packages:
 ```bash
 docker run --rm -v "./sources/<project>:/out" debian:12 bash -c \
   "echo 'deb-src http://deb.debian.org/debian bookworm main' >> /etc/apt/sources.list \
