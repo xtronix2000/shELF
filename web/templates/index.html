@@ -1,98 +1,17 @@
-<!-- web/templates/index.html -->
 {% extends "base.html" %}
 
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
 {% block content %}
-<style>
-    .upload-box {
-        border: 1px solid #21262d;
-        border-radius: 8px;
-        padding: 40px;
-        text-align: center;
-    }
-
-    .upload-box h2 {
-        color: #58a6ff;
-        margin-bottom: 8px;
-        font-size: 1.1rem;
-    }
-
-    .upload-box p {
-        color: #8b949e;
-        font-size: 0.85rem;
-        margin-bottom: 30px;
-    }
-
-    .file-input-wrapper {
-        margin-bottom: 20px;
-    }
-
-    input[type="file"] {
-        display: none;
-    }
-
-    .file-label {
-        display: inline-block;
-        padding: 10px 24px;
-        border: 1px dashed #30363d;
-        border-radius: 6px;
-        cursor: pointer;
-        color: #8b949e;
-        font-size: 0.9rem;
-        transition: border-color 0.2s;
-    }
-
-    .file-label:hover {
-        border-color: #58a6ff;
-        color: #58a6ff;
-    }
-
-    .file-name {
-        margin-top: 10px;
-        font-size: 0.8rem;
-        color: #8b949e;
-    }
-
-    .submit-btn {
-        display: inline-block;
-        padding: 10px 32px;
-        background: #1f6feb;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
-        transition: background 0.2s;
-    }
-
-    .submit-btn:hover {
-        background: #388bfd;
-    }
-
-    .hint {
-        margin-top: 30px;
-        padding: 16px;
-        background: #161b22;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        color: #8b949e;
-        text-align: left;
-    }
-
-    .hint code {
-        color: #79c0ff;
-    }
-</style>
-
 <div class="upload-box">
     <h2>Анализ пакета</h2>
     <p>Загрузите архив с исходным кодом Debian пакета (.tar.gz или .tar.xz)</p>
 
     <form action="/analyze" method="POST" enctype="multipart/form-data">
         <div class="file-input-wrapper">
-            <label class="file-label" for="archive">
-                Выбрать архив
-            </label>
+            <label class="file-label" for="archive">Выбрать архив</label>
             <input type="file" id="archive" name="archive"
                    accept=".gz,.xz,.bz2" onchange="showFileName(this)">
             <div class="file-name" id="file-name">файл не выбран</div>
@@ -115,10 +34,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    function showFileName(input) {
-        const name = input.files[0] ? input.files[0].name : "файл не выбран";
-        document.getElementById("file-name").textContent = name;
-    }
-</script>
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
 {% endblock %}
